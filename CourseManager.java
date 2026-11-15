@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 public class CourseManager {
 
+  // in-memory list of all courses
   private final ArrayList<Course> courseList = new ArrayList<>();
 
   public void addCourse(Course course) {
@@ -27,6 +28,7 @@ public class CourseManager {
   }
 
   public void searchCourse(String code) {
+    // normalise input so the search ignores case and spaces
     String searchCode = code.trim().toUpperCase();
     for (Course course : courseList) {
       if (course.getCode().toUpperCase().equals(searchCode)) {
@@ -45,17 +47,16 @@ public class CourseManager {
     System.out.println("Course not found.");
   }
 
+  // recursive: sums units from index onward
   public int calculateTotalUnits(int index) {
-    return sumCreditUnitsRecursive(index);
-  }
-
-  public int sumCreditUnitsRecursive(int index) {
     if (index >= courseList.size()) {
-      return 0;
+      return 0; // base case
     }
-    return courseList.get(index).getUnits() + sumCreditUnitsRecursive(index + 1);
+    // recursive call on the next course
+    return courseList.get(index).getUnits() + calculateTotalUnits(index + 1);
   }
 
+  // writes each course as a comma-separated line
   public void saveToFile(String filename) {
     try (PrintWriter writer = new PrintWriter(new File(filename))) {
       for (Course course : courseList) {
@@ -67,13 +68,14 @@ public class CourseManager {
     }
   }
 
+  // reads courses back from the file
   public void loadFromFile(String filename) {
-    courseList.clear();
+    courseList.clear(); // clear current list before loading
     try (Scanner fileScanner = new Scanner(new File(filename))) {
       while (fileScanner.hasNextLine()) {
         String line = fileScanner.nextLine();
         String[] parts = line.split(",");
-        if (parts.length == 3) {
+        if (parts.length == 3) { // skip malformed lines
           courseList.add(new Course(parts[0], parts[1], Integer.parseInt(parts[2])));
         }
       }

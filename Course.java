@@ -1,3 +1,4 @@
+// Data model for a single course
 public class Course {
 
   private String code;

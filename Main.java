@@ -9,6 +9,7 @@ public class Main {
     String filename = "courses.txt";
     boolean running = true;
 
+    // try to load saved data on startup
     courseSystem.loadFromFile(filename);
 
     while (running) {
@@ -25,13 +26,14 @@ public class Main {
       int choice = -1;
       try {
         choice = scanner.nextInt();
-        scanner.nextLine();
+        scanner.nextLine(); // consume leftover newline
       } catch (InputMismatchException e) {
         System.out.println("Invalid input. Please enter a number.");
-        scanner.nextLine();
+        scanner.nextLine(); // discard bad input
         continue;
       }
 
+      // handle the chosen menu option
       switch (choice) {
         case 1:
           System.out.print("Enter Course Code (e.g. COS201): ");
@@ -40,15 +42,16 @@ public class Main {
           String courseTitle = scanner.nextLine().trim();
 
           int units = 0;
+          // keep asking until a valid integer is entered
           while (true) {
             System.out.print("Enter Course Units: ");
             try {
               units = scanner.nextInt();
-              scanner.nextLine();
+              scanner.nextLine(); // consume leftover newline
               break;
             } catch (InputMismatchException e) {
               System.out.println("Invalid unit value. Please enter an integer.");
-              scanner.nextLine();
+              scanner.nextLine(); // discard bad input
             }
           }
           courseSystem.addCourse(new Course(courseCode, courseTitle, units));
@@ -62,6 +65,7 @@ public class Main {
           courseSystem.searchCourse(searchCode);
           break;
         case 4:
+          // start the recursion at the first course
           int totalUnits = courseSystem.calculateTotalUnits(0);
           System.out.println("Total Units Enrolled: " + totalUnits);
           break;
